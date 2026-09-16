@@ -1,0 +1,34 @@
+meta {
+  name: Crear publicación (investigador inexistente)
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:8080/api/publicaciones
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "investigadorCorreo": "no-existe@universidad.edu",
+    "titulo": "Publicación sin investigador",
+    "tipo": "articulo",
+    "anio": 2025,
+    "detalles": {
+      "revista": "Revista de prueba",
+      "doi": "10.1234/prueba.404"
+    }
+  }
+}
+
+assert {
+  res.status: eq 404
+  res.body.estado: eq 404
+  res.body.mensaje: eq No existe un investigador con correo no-existe@universidad.edu
+}

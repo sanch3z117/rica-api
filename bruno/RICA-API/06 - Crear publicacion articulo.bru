@@ -1,0 +1,36 @@
+meta {
+  name: Crear publicación (artículo)
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8080/api/publicaciones
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "investigadorCorreo": "ana.torres@universidad.edu",
+    "titulo": "Inteligencia artificial aplicada a la educación",
+    "tipo": "articulo",
+    "anio": 2025,
+    "detalles": {
+      "revista": "Revista Colombiana de Computación",
+      "doi": "10.1234/rccomp.2025.001"
+    }
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.investigadorCorreo: eq ana.torres@universidad.edu
+  res.body.tipo: eq articulo
+  res.body.detalles.revista: eq Revista Colombiana de Computación
+  res.body.detalles.doi: eq 10.1234/rccomp.2025.001
+}

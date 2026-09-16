@@ -1,0 +1,22 @@
+meta {
+  name: Listar publicaciones por investigador
+  type: http
+  seq: 8
+}
+
+get {
+  url: http://localhost:8080/api/publicaciones?investigadorCorreo=ana.torres@universidad.edu
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body: isArray
+  res.body.0.investigadorCorreo: eq ana.torres@universidad.edu
+  res.body.0.detalles.revista: eq Revista Colombiana de Computación
+  res.body.0.detalles.doi: eq 10.1234/rccomp.2025.001
+  res.body.1.investigadorCorreo: eq ana.torres@universidad.edu
+  res.body.1.detalles.editorial: eq Editorial Universitaria
+  res.body.1.detalles.isbn: eq 978-958-000-0001
+}

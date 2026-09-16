@@ -1,0 +1,36 @@
+meta {
+  name: Crear publicación (libro)
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/api/publicaciones
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "investigadorCorreo": "ana.torres@universidad.edu",
+    "titulo": "Fundamentos de inteligencia artificial",
+    "tipo": "libro",
+    "anio": 2025,
+    "detalles": {
+      "editorial": "Editorial Universitaria",
+      "isbn": "978-958-000-0001"
+    }
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.investigadorCorreo: eq ana.torres@universidad.edu
+  res.body.tipo: eq libro
+  res.body.detalles.editorial: eq Editorial Universitaria
+  res.body.detalles.isbn: eq 978-958-000-0001
+}

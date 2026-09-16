@@ -1,4 +1,4 @@
-package rica_api;
+package rica_api.publicaciones;
 
 public class PublicacionMapper {
     

@@ -1,4 +1,4 @@
-package rica_api;
+package rica_api.investigadores;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

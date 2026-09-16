@@ -6,6 +6,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import rica_api.compartido.RecursoNoEncontradoException;
+import rica_api.investigadores.InvestigadorRepository;
+import rica_api.publicaciones.Publicacion;
+import rica_api.publicaciones.PublicacionRepository;
+import rica_api.publicaciones.PublicacionService;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

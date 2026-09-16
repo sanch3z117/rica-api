@@ -1,16 +1,25 @@
-package rica_api;
+package rica_api.publicaciones;
 
 import java.util.Map;
 
-public class PublicacionRequest {
+public class PublicacionResponse {
 
+    private String id;
     private String investigadorCorreo;
     private String titulo;
     private String tipo;
     private Integer anio;
     private Map<String, String> detalles;
 
-    public PublicacionRequest() {
+    public PublicacionResponse() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getInvestigadorCorreo() {

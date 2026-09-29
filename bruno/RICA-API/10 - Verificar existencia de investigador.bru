@@ -1,0 +1,16 @@
+meta {
+  name: Verificar existencia de investigador
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:8080/api/investigadores/existe?correo=ana.torres@uptc.edu.co
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.correo: eq ana.torres@uptc.edu.co
+}

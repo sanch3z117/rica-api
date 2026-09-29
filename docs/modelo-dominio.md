@@ -4,6 +4,10 @@ Documento del taller de DDD (Lección 3) aplicado sobre `rica-api`: lenguaje ubi
 límite de los Agregados y separación entre el modelo de dominio y el modelo de persistencia.
 Se complementa con el código de los paquetes `investigadores` y `publicaciones`.
 
+> Tras la Lección 5, cada paquete vive en su propio servicio: `investigadores-service` y
+> `publicaciones-service`. Las rutas de este documento se leen dentro del módulo
+> correspondiente.
+
 ## 1. Lenguaje Ubicuo
 
 | Término | Significado en RICA | Dónde vive en el código |

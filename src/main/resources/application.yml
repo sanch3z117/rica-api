@@ -25,3 +25,7 @@ spring:
   
   mongodb:
     uri: mongodb://localhost:27017/rica
+
+rica:
+  publicaciones:
+    limite-anual: 5

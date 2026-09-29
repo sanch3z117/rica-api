@@ -1,13 +1,15 @@
 package rica_api;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.investigadores.InvestigadorRepository;
+import rica_api.publicaciones.LimitePublicacionesAlcanzadoException;
+import rica_api.publicaciones.LimitePublicacionesAnualesService;
 import rica_api.publicaciones.Publicacion;
 import rica_api.publicaciones.PublicacionRepository;
 import rica_api.publicaciones.PublicacionService;
@@ -18,11 +20,15 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PublicacionServiceTest {
+
+    private static final String CORREO_ANA = "ana.torres@uptc.edu.co";
 
     @Mock
     private PublicacionRepository publicacionRepository;
@@ -30,51 +36,75 @@ class PublicacionServiceTest {
     @Mock
     private InvestigadorRepository investigadorRepository;
 
-    @InjectMocks
     private PublicacionService publicacionService;
 
+    @BeforeEach
+    void prepararServicio() {
+        publicacionService = new PublicacionService(
+                publicacionRepository,
+                investigadorRepository,
+                new LimitePublicacionesAnualesService(5));
+    }
+
     @Test
-    void registrarDevuelveLaPublicacionCuandoElInvestigadorExiste() {
-        Publicacion nueva = crearPublicacion("articulo", Map.of(
+    void registrarDevuelveLaPublicacionCuandoElInvestigadorExisteYPuedeRegistrar() {
+        Publicacion nueva = crearPublicacion(2025, "articulo", Map.of(
                 "revista", "Revista de prueba",
                 "doi", "10.1234/prueba.001"));
-        when(investigadorRepository.existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co"))
-                .thenReturn(true);
+        when(investigadorRepository.existsByCorreoInstitucionalValor(CORREO_ANA)).thenReturn(true);
+        when(publicacionRepository.findByInvestigadorCorreo(CORREO_ANA)).thenReturn(List.of());
         when(publicacionRepository.save(nueva)).thenReturn(nueva);
 
         Publicacion resultado = publicacionService.registrar(nueva);
 
         assertThat(resultado).isSameAs(nueva);
-        verify(investigadorRepository).existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co");
+        verify(investigadorRepository).existsByCorreoInstitucionalValor(CORREO_ANA);
         verify(publicacionRepository).save(nueva);
     }
 
     @Test
     void registrarLanzaExcepcionCuandoElInvestigadorNoExiste() {
-        Publicacion nueva = crearPublicacion("libro", Map.of(
+        Publicacion nueva = crearPublicacion(2025, "libro", Map.of(
                 "editorial", "Editorial de prueba",
                 "isbn", "978-958-000-0001"));
-        when(investigadorRepository.existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co"))
-                .thenReturn(false);
+        when(investigadorRepository.existsByCorreoInstitucionalValor(CORREO_ANA)).thenReturn(false);
 
         assertThatThrownBy(() -> publicacionService.registrar(nueva))
                 .isInstanceOf(RecursoNoEncontradoException.class)
-                .hasMessageContaining("ana.torres@uptc.edu.co");
+                .hasMessageContaining(CORREO_ANA);
 
-        verify(investigadorRepository).existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co");
+        verify(publicacionRepository, never()).save(any(Publicacion.class));
+    }
+
+    @Test
+    void registrarRechazaCuandoElInvestigadorAlcanzoElLimiteAnual() {
+        Publicacion nueva = crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.005"));
+        when(investigadorRepository.existsByCorreoInstitucionalValor(CORREO_ANA)).thenReturn(true);
+        when(publicacionRepository.findByInvestigadorCorreo(CORREO_ANA)).thenReturn(List.of(
+                crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.001")),
+                crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.002")),
+                crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.003")),
+                crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.004")),
+                crearPublicacion(2025, "articulo", Map.of("doi", "10.1234/prueba.005"))));
+
+        assertThatThrownBy(() -> publicacionService.registrar(nueva))
+                .isInstanceOf(LimitePublicacionesAlcanzadoException.class)
+                .hasMessageContaining("2025");
+
+        verify(publicacionRepository, never()).save(any(Publicacion.class));
     }
 
     @Test
     void listarPorInvestigadorDevuelveSusPublicaciones() {
-        Publicacion articulo = crearPublicacion("articulo", Map.of("doi", "10.1234/prueba.001"));
-        Publicacion libro = crearPublicacion("libro", Map.of("isbn", "978-958-000-0001"));
-        when(publicacionRepository.findByInvestigadorCorreo("ana.torres@uptc.edu.co"))
+        Publicacion articulo = crearPublicacion(2024, "articulo", Map.of("doi", "10.1234/prueba.001"));
+        Publicacion libro = crearPublicacion(2025, "libro", Map.of("isbn", "978-958-000-0001"));
+        when(publicacionRepository.findByInvestigadorCorreo(CORREO_ANA))
                 .thenReturn(List.of(articulo, libro));
 
-        List<Publicacion> resultado = publicacionService.listarPorInvestigador("ana.torres@uptc.edu.co");
+        List<Publicacion> resultado = publicacionService.listarPorInvestigador(CORREO_ANA);
 
         assertThat(resultado).containsExactly(articulo, libro);
-        verify(publicacionRepository).findByInvestigadorCorreo("ana.torres@uptc.edu.co");
+        verify(publicacionRepository).findByInvestigadorCorreo(CORREO_ANA);
     }
 
     @Test
@@ -86,13 +116,14 @@ class PublicacionServiceTest {
                 .hasMessageContaining("publicacion-inexistente");
     }
 
-    private Publicacion crearPublicacion(String tipo, Map<String, String> detalles) {
+    private Publicacion crearPublicacion(Integer anio, String tipo, Map<String, String> detalles) {
         Publicacion publicacion = new Publicacion();
-        publicacion.setInvestigadorCorreo("ana.torres@uptc.edu.co");
+        publicacion.setInvestigadorCorreo(CORREO_ANA);
         publicacion.setTitulo("Publicación de prueba");
         publicacion.setTipo(tipo);
-        publicacion.setAnio(2025);
+        publicacion.setAnio(anio);
         publicacion.setDetalles(detalles);
         return publicacion;
     }
+
 }

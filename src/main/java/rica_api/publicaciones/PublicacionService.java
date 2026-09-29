@@ -12,11 +12,14 @@ public class PublicacionService {
 
     private final PublicacionRepository publicacionRepository;
     private final InvestigadorRepository investigadorRepository;
+    private final LimitePublicacionesAnualesService limitePublicacionesAnualesService;
 
     public PublicacionService(PublicacionRepository publicacionRepository,
-                               InvestigadorRepository investigadorRepository) {
+                               InvestigadorRepository investigadorRepository,
+                               LimitePublicacionesAnualesService limitePublicacionesAnualesService) {
         this.publicacionRepository = publicacionRepository;
         this.investigadorRepository = investigadorRepository;
+        this.limitePublicacionesAnualesService = limitePublicacionesAnualesService;
     }
 
     public Publicacion registrar(Publicacion publicacion) {
@@ -24,6 +27,9 @@ public class PublicacionService {
             throw new RecursoNoEncontradoException(
                     "No existe un investigador con correo " + publicacion.getInvestigadorCorreo());
         }
+        List<Publicacion> publicacionesDelInvestigador =
+                publicacionRepository.findByInvestigadorCorreo(publicacion.getInvestigadorCorreo());
+        limitePublicacionesAnualesService.validarRegistro(publicacionesDelInvestigador, publicacion.getAnio());
         return publicacionRepository.save(publicacion);
     }
 

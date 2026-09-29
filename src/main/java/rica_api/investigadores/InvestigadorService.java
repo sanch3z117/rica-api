@@ -10,9 +10,12 @@ import java.util.List;
 public class InvestigadorService {
 
     private final InvestigadorRepository investigadorRepository;
+    private final InvestigadorFactory investigadorFactory;
 
-    public InvestigadorService(InvestigadorRepository investigadorRepository) {
+    public InvestigadorService(InvestigadorRepository investigadorRepository,
+                               InvestigadorFactory investigadorFactory) {
         this.investigadorRepository = investigadorRepository;
+        this.investigadorFactory = investigadorFactory;
     }
 
     public List<Investigador> listarTodos() {
@@ -25,7 +28,8 @@ public class InvestigadorService {
                         "No existe un investigador con id " + id));
     }
 
-    public Investigador registrar(Investigador investigador) {
+    public Investigador registrar(String nombreCompleto, String correoInstitucional, String grupoInvestigacion) {
+        Investigador investigador = investigadorFactory.registrar(nombreCompleto, correoInstitucional, grupoInvestigacion);
         String correo = investigador.getCorreoInstitucional().valor();
         if (investigadorRepository.existsByCorreoInstitucionalValor(correo)) {
             throw new CorreoDuplicadoException(

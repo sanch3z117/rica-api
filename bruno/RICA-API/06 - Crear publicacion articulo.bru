@@ -16,7 +16,7 @@ headers {
 
 body:json {
   {
-    "investigadorCorreo": "ana.torres@universidad.edu",
+    "investigadorCorreo": "ana.torres@uptc.edu.co",
     "titulo": "Inteligencia artificial aplicada a la educación",
     "tipo": "articulo",
     "anio": 2025,
@@ -29,7 +29,7 @@ body:json {
 
 assert {
   res.status: eq 201
-  res.body.investigadorCorreo: eq ana.torres@universidad.edu
+  res.body.investigadorCorreo: eq ana.torres@uptc.edu.co
   res.body.tipo: eq articulo
   res.body.detalles.revista: eq Revista Colombiana de Computación
   res.body.detalles.doi: eq 10.1234/rccomp.2025.001

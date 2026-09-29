@@ -26,9 +26,10 @@ public class InvestigadorService {
     }
 
     public Investigador registrar(Investigador investigador) {
-        if (investigadorRepository.existsByCorreoInstitucional(investigador.getCorreoInstitucional())) {
+        String correo = investigador.getCorreoInstitucional().valor();
+        if (investigadorRepository.existsByCorreoInstitucionalValor(correo)) {
             throw new CorreoDuplicadoException(
-                    "Ya existe un investigador registrado con el correo " + investigador.getCorreoInstitucional());
+                    "Ya existe un investigador registrado con el correo " + correo);
         }
         return investigadorRepository.save(investigador);
     }

@@ -16,7 +16,7 @@ headers {
 
 body:json {
   {
-    "investigadorCorreo": "no-existe@universidad.edu",
+    "investigadorCorreo": "no-existe@uptc.edu.co",
     "titulo": "Publicación sin investigador",
     "tipo": "articulo",
     "anio": 2025,
@@ -30,5 +30,5 @@ body:json {
 assert {
   res.status: eq 404
   res.body.estado: eq 404
-  res.body.mensaje: eq No existe un investigador con correo no-existe@universidad.edu
+  res.body.mensaje: eq No existe un investigador con correo no-existe@uptc.edu.co
 }

@@ -38,14 +38,14 @@ class PublicacionServiceTest {
         Publicacion nueva = crearPublicacion("articulo", Map.of(
                 "revista", "Revista de prueba",
                 "doi", "10.1234/prueba.001"));
-        when(investigadorRepository.existsByCorreoInstitucional("ana.torres@uptc.edu.co"))
+        when(investigadorRepository.existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co"))
                 .thenReturn(true);
         when(publicacionRepository.save(nueva)).thenReturn(nueva);
 
         Publicacion resultado = publicacionService.registrar(nueva);
 
         assertThat(resultado).isSameAs(nueva);
-        verify(investigadorRepository).existsByCorreoInstitucional("ana.torres@uptc.edu.co");
+        verify(investigadorRepository).existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co");
         verify(publicacionRepository).save(nueva);
     }
 
@@ -54,14 +54,14 @@ class PublicacionServiceTest {
         Publicacion nueva = crearPublicacion("libro", Map.of(
                 "editorial", "Editorial de prueba",
                 "isbn", "978-958-000-0001"));
-        when(investigadorRepository.existsByCorreoInstitucional("ana.torres@uptc.edu.co"))
+        when(investigadorRepository.existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co"))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> publicacionService.registrar(nueva))
                 .isInstanceOf(RecursoNoEncontradoException.class)
                 .hasMessageContaining("ana.torres@uptc.edu.co");
 
-        verify(investigadorRepository).existsByCorreoInstitucional("ana.torres@uptc.edu.co");
+        verify(investigadorRepository).existsByCorreoInstitucionalValor("ana.torres@uptc.edu.co");
     }
 
     @Test

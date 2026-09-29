@@ -33,21 +33,51 @@ services:
       timeout: 5s
       retries: 10
 
-  rica-api:
+  investigadores-service:
     build:
       context: .
-    container_name: rica-api
+      dockerfile: investigadores-service/Dockerfile
+    container_name: investigadores-service
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://rica-db:5432/rica
-      SPRING_MONGODB_URI: mongodb://rica-mongo:27017/rica
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       rica-db:
         condition: service_healthy
+
+  publicaciones-service:
+    build:
+      context: .
+      dockerfile: publicaciones-service/Dockerfile
+    container_name: publicaciones-service
+    restart: unless-stopped
+    environment:
+      SPRING_MONGODB_URI: mongodb://rica-mongo:27017/rica
+      RICA_INVESTIGADORES_BASE_URL: http://investigadores-service:8081
+    ports:
+      - "8082:8082"
+    depends_on:
       rica-mongo:
         condition: service_healthy
+      investigadores-service:
+        condition: service_started
+
+  api-gateway:
+    image: nginx:alpine
+    container_name: api-gateway
+    restart: unless-stopped
+    environment:
+      INVESTIGADORES_UPSTREAM: http://investigadores-service:8081
+      PUBLICACIONES_UPSTREAM: http://publicaciones-service:8082
+    volumes:
+      - ./gateway/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - investigadores-service
+      - publicaciones-service
 
   rica-frontend:
     build:
@@ -57,7 +87,7 @@ services:
     ports:
       - "5173:80"
     depends_on:
-      - rica-api
+      - api-gateway
 
 volumes:
   rica-db-data:

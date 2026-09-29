@@ -8,11 +8,11 @@ Se complementa con el código de los paquetes `investigadores` y `publicaciones`
 
 | Término | Significado en RICA | Dónde vive en el código |
 | --- | --- | --- |
-| **Investigador** | Persona vinculada a la universidad que produce publicaciones. Su identidad no está en ningún atributo visible: la asigna el sistema. | `investigadores/Investigador` |
-| **Correo institucional** | Medio de contacto del investigador. No cualquier correo sirve: debe pertenecer al dominio de la universidad. | `investigadores/CorreoInstitucional` |
+| **Investigador** | Persona vinculada a la universidad que produce publicaciones. Su identidad no está en ningún atributo visible: la asigna el sistema. | `investigadores/dominio/Investigador` |
+| **Correo institucional** | Medio de contacto del investigador. No cualquier correo sirve: debe pertenecer al dominio de la universidad. | `investigadores/dominio/CorreoInstitucional` |
 | **Grupo de investigación** | Colectivo al que está vinculado el investigador. | `Investigador.grupoInvestigacion` |
-| **Publicación** | Resultado académico (artículo, libro…) de un investigador, con año, tipo y detalles propios de cada tipo. | `publicaciones/Publicacion` |
-| **Límite anual de publicaciones** | Regla del negocio: un investigador no puede registrar más de cinco publicaciones en un mismo año. | `publicaciones/LimitePublicacionesAnualesService` |
+| **Publicación** | Resultado académico (artículo, libro…) de un investigador, con año, tipo y detalles propios de cada tipo. | `publicaciones/dominio/Publicacion` |
+| **Límite anual de publicaciones** | Regla del negocio: un investigador no puede registrar más de cinco publicaciones en un mismo año. | `publicaciones/dominio/LimitePublicacionesAnualesService` |
 
 Los términos del negocio se quedan en español (`Investigador`, `Publicacion`,
 `correoInstitucional`) porque son las palabras que usaría un coordinador de investigación;
@@ -55,15 +55,17 @@ Factory (paso 5) en vez de repartir esa responsabilidad entre los clientes.
   (`@Entity` / `@Document`). Es una coincidencia cómoda, no una garantía: si en el futuro la
   forma de guardar se separa de la forma de pensar el negocio, el adaptador de persistencia es
   el único lugar que debe cambiar.
-- Los repositorios se declaran **por Agregado** (`InvestigadorRepository`,
-  `PublicacionRepository`), nunca por tabla ni por entidad interna.
+- Los repositorios se declaran **por Agregado** (`RepositorioInvestigadores`,
+  `RepositorioPublicaciones`), nunca por tabla ni por entidad interna, y viven en la capa de
+  aplicación como puertos secundarios: el adaptador de persistencia (JPA o Mongo) es un
+  detalle intercambiable.
 
 ## 4. Qué se implementó en este taller
 
 | Paso | Pieza | Dónde |
 | --- | --- | --- |
 | 1 · Lenguaje Ubicuo | Auditoría de nombres | Este documento, sección 1 |
-| 2 · Value Object | `CorreoInstitucional` | `investigadores/CorreoInstitucional` (+ `CorreoInstitucionalTest`) |
-| 3 · Servicio de Dominio | `LimitePublicacionesAnualesService` | `publicaciones/LimitePublicacionesAnualesService` (+ test) |
+| 2 · Value Object | `CorreoInstitucional` | `investigadores/dominio/CorreoInstitucional` (+ `CorreoInstitucionalTest`) |
+| 3 · Servicio de Dominio | `LimitePublicacionesAnualesService` | `publicaciones/dominio/LimitePublicacionesAnualesService` (+ test) |
 | 4 · Límite del Agregado | Mini-ADR de `Investigador` y `Publicacion` | Este documento, sección 2 |
-| 5 · Factory | `InvestigadorFactory` | `investigadores/InvestigadorFactory` (+ test) |
+| 5 · Factory | `InvestigadorFactory` | `investigadores/aplicacion/InvestigadorFactory` (+ test) |

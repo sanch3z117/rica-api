@@ -6,8 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import rica_api.investigadores.CorreoDuplicadoException;
-import rica_api.publicaciones.LimitePublicacionesAlcanzadoException;
+import rica_api.investigadores.aplicacion.CorreoDuplicadoException;
+import rica_api.publicaciones.dominio.LimitePublicacionesAlcanzadoException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;

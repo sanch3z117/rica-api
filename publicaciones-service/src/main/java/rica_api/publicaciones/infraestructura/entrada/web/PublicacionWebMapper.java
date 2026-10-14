@@ -25,6 +25,7 @@ public class PublicacionWebMapper {
         response.setTipo(publicacion.getTipo());
         response.setAnio(publicacion.getAnio());
         response.setDetalles(publicacion.getDetalles());
+        response.setEstado(publicacion.getEstado());
         return response;
     }
 

@@ -3,6 +3,7 @@ package rica_api.publicaciones.infraestructura.salida.persistencia;
 import org.springframework.stereotype.Component;
 
 import rica_api.publicaciones.aplicacion.RepositorioPublicaciones;
+import rica_api.publicaciones.dominio.EstadoPublicacion;
 import rica_api.publicaciones.dominio.Publicacion;
 
 import java.util.List;
@@ -18,8 +19,9 @@ public class PublicacionRepositoryMongoAdapter implements RepositorioPublicacion
     }
 
     @Override
-    public List<Publicacion> listarPorInvestigador(String investigadorCorreo) {
-        return publicacionMongoRepository.findByInvestigadorCorreo(investigadorCorreo);
+    public List<Publicacion> listarRegistradasPorInvestigador(String investigadorCorreo) {
+        return publicacionMongoRepository.findByInvestigadorCorreoAndEstado(
+                investigadorCorreo, EstadoPublicacion.REGISTRADA);
     }
 
     @Override

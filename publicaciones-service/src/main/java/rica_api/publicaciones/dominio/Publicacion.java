@@ -16,6 +16,7 @@ public class Publicacion {
     private String tipo;
     private Integer anio;
     private Map<String, String> detalles;
+    private EstadoPublicacion estado;
 
     public Publicacion() {
     }
@@ -66,6 +67,14 @@ public class Publicacion {
 
     public void setDetalles(Map<String, String> detalles) {
         this.detalles = detalles;
+    }
+
+    public EstadoPublicacion getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPublicacion estado) {
+        this.estado = estado;
     }
 
 }

@@ -1,5 +1,7 @@
 package rica_api.publicaciones.infraestructura.entrada.web;
 
+import rica_api.publicaciones.dominio.EstadoPublicacion;
+
 import java.util.Map;
 
 public class PublicacionResponse {
@@ -10,6 +12,7 @@ public class PublicacionResponse {
     private String tipo;
     private Integer anio;
     private Map<String, String> detalles;
+    private EstadoPublicacion estado;
 
     public PublicacionResponse() {
     }
@@ -60,6 +63,14 @@ public class PublicacionResponse {
 
     public void setDetalles(Map<String, String> detalles) {
         this.detalles = detalles;
+    }
+
+    public EstadoPublicacion getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPublicacion estado) {
+        this.estado = estado;
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface RepositorioPublicaciones {
 
-    List<Publicacion> listarPorInvestigador(String investigadorCorreo);
+    List<Publicacion> listarRegistradasPorInvestigador(String investigadorCorreo);
 
     Optional<Publicacion> buscarPorId(String id);
 

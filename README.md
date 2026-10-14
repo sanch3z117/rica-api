@@ -1,22 +1,36 @@
 # RICA — Red Inteligente de Investigación y Colaboración Académica
 
 Proyecto de clase de Ingeniería de Software II (UPTC). El repositorio contiene **dos
-microservicios independientes** y una **fachada** que conserva un único punto de entrada.
+microservicios independientes**, un **registro de servicios**, un **API Gateway** y la
+infraestructura de mensajería que los conecta.
 
-## Servicios
+## Componentes
 
-| Servicio | Puerto | Base de datos | Responsabilidad |
+| Componente | Puerto | Dependencias | Responsabilidad |
 | --- | --- | --- | --- |
-| `investigadores-service` | 8081 | PostgreSQL (`rica`) | Agregado `Investigador`, Value Object `CorreoInstitucional`, Factory y API REST |
-| `publicaciones-service` | 8082 | MongoDB (`rica`) | Publicaciones, servicio de dominio del límite anual y API REST |
-| `api-gateway` (nginx) | 8080 | — | Enruta `/api/investigadores` al servicio de investigadores y el resto al de publicaciones |
+| `api-gateway` | 8080 | Eureka, Redis | Punto de entrada único: rutas, filtros y límite de tasa (Spring Cloud Gateway) |
+| `eureka-server` | 8761 | — | Registro de servicios: las instancias se auto-registran y el gateway las descubre |
+| `investigadores-service` | 8081 | PostgreSQL, Kafka, Eureka | Agregado `Investigador`, Value Object `CorreoInstitucional`, Factory, API REST y Outbox del evento `InvestigadorRegistrado` |
+| `publicaciones-service` | 8082 | MongoDB, Kafka, Eureka | Publicaciones con Saga del límite anual, consumidor idempotente de `InvestigadorRegistrado` y cliente HTTP resiliente hacia investigadores |
 
-El frontend (`rica-frontend`) sigue hablando con `http://localhost:8080/api`: la fachada
+El frontend (`rica-frontend`) sigue hablando con `http://localhost:8080/api`; el gateway
 mantiene ese contrato mientras cada servicio evoluciona y se despliega por separado.
 
-`publicaciones-service` ya no consulta la base de datos de investigadores: le pregunta al
-servicio por HTTP (`GET /api/investigadores/existe?correo=...`), a través del puerto
-`ConsultaInvestigadores`.
+## Comunicación entre servicios (Lección 6)
+
+- **REST síncrono con resiliencia** — `publicaciones-service` confirma al investigador con
+  `GET /api/investigadores/existe?correo=...` a través del puerto `ConsultaInvestigadores`,
+  protegido con Resilience4j (Circuit Breaker + Retry) y timeouts explícitos en el cliente.
+- **Mensajería asíncrona** — al registrar un investigador, `investigadores-service` guarda
+  `InvestigadorRegistrado` en su tabla outbox dentro de la misma transacción (Transactional
+  Outbox) y un publicador programado lo envía al topic `investigadores-eventos` (Kafka).
+  `publicaciones-service` lo consume de forma idempotente (colección `eventos_procesados`).
+- **Saga con compensación** — registrar una publicación crea el documento en estado
+  `PENDIENTE`, confirma investigador y límite anual, y lo pasa a `REGISTRADA`; si algo falla,
+  lo compensa marcándolo `RECHAZADA`.
+- **API Gateway + descubrimiento** — el gateway enruta `lb://investigadores-service` y
+  `lb://publicaciones-service` contra Eureka, con límite de tasa de 20 req/s (ráfaga 40)
+  sobre publicaciones. Rutas activas en `/actuator/gateway/routes`.
 
 ## Cómo correr el stack completo (Docker)
 
@@ -24,7 +38,9 @@ servicio por HTTP (`GET /api/investigadores/existe?correo=...`), a través del p
 docker compose up -d --build
 ```
 
-- API por la fachada: http://localhost:8080/api/status
+- API por el gateway: http://localhost:8080/api/status
+- Rutas del gateway: http://localhost:8080/actuator/gateway/routes
+- Registro de Eureka: http://localhost:8761
 - Swagger de investigadores: http://localhost:8081/swagger-ui/index.html
 - Swagger de publicaciones: http://localhost:8082/swagger-ui/index.html
 - Frontend: http://localhost:5173
@@ -32,32 +48,24 @@ docker compose up -d --build
 ## Desarrollo local (servicios en tu máquina)
 
 ```bash
-docker compose up -d rica-db rica-mongo
+docker compose up -d rica-db rica-mongo kafka redis eureka-server
 ./mvnw -pl investigadores-service spring-boot:run
 ./mvnw -pl publicaciones-service spring-boot:run
-```
-
-Si además quieres usar el frontend contra la fachada, levanta solo el gateway apuntando a
-los servicios locales:
-
-```bash
-docker compose run --rm --publish 8080:80 \
-  -e INVESTIGADORES_UPSTREAM=http://host.docker.internal:8081 \
-  -e PUBLICACIONES_UPSTREAM=http://host.docker.internal:8082 \
-  api-gateway
+./mvnw -pl api-gateway spring-boot:run
 ```
 
 ## Pruebas
 
 ```bash
-./mvnw test                                # los dos servicios
-./mvnw -pl investigadores-service test     # solo uno
+./mvnw test                                # todos los módulos
+./mvnw -pl publicaciones-service test      # solo uno
 ```
 
 ## Estructura
 
 - `investigadores-service/` y `publicaciones-service/`: cada uno es su propio hexágono
   (`dominio`, `aplicacion`, `infraestructura`) y su propio proyecto desplegable.
-- `gateway/`: configuración de nginx que conserva el contrato de entrada.
+- `api-gateway/`: Spring Cloud Gateway con rutas, límite de tasa y descubrimiento por Eureka.
+- `eureka-server/`: registro de servicios.
 - `docs/`: modelo de dominio, ADRs y diagramas C4.
-- `bruno/`: colección de peticiones contra la API (a través de la fachada, puerto 8080).
+- `bruno/`: colección de peticiones contra la API (a través del gateway, puerto 8080).

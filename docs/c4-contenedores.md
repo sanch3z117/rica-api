@@ -1,7 +1,7 @@
 # Diagramas C4 — RICA
 
 Diagramas de **Contexto** (nivel 1) y **Contenedores** (nivel 2) del proyecto, en el
-estado que quedó tras la Lección 5. Se dibujan con Mermaid para que vivan en el mismo
+estado que quedó tras la Lección 6. Se dibujan con Mermaid para que vivan en el mismo
 repositorio que el código.
 
 ## Contexto (nivel 1)
@@ -83,5 +83,57 @@ flowchart TB
     pubWeb --> pubNucleo
     pubNucleo --> pubMongo --> mo
     pubNucleo -->|"puerto ConsultaInvestigadores<br/>[HTTP/JSON]"| pubHttp
+    pubHttp -->|"/api/investigadores/existe?correo=...<br/>[HTTP]"| invWeb
+```
+
+## Contenedores (nivel 2) — estado tras la Lección 6
+
+Se añaden el gateway Spring Cloud Gateway, el registro Eureka, el bróker Kafka (con el
+patrón Transactional Outbox en investigadores) y Redis para el límite de tasa. La
+comunicación entre servicios combina REST síncrono protegido con resiliencia y mensajería
+asíncrona con consumidor idempotente.
+
+```mermaid
+flowchart TB
+    usuario["Usuario<br/>[persona]"]
+    frontend["rica-frontend<br/>[SPA React + nginx]"]
+
+    gateway["api-gateway<br/>[Spring Cloud Gateway]"]
+    eureka["eureka-server<br/>[registro de servicios]"]
+    kafka[("Kafka<br/>[investigadores-eventos]")]
+    redis[("Redis<br/>[rate limiter del gateway]")]
+
+    subgraph inv["investigadores-service [Spring Boot]"]
+        invWeb["Adaptador web"]
+        invNucleo["Núcleo<br/>Investigador · CorreoInstitucional<br/>InvestigadorFactory"]
+        invJpa["Adaptador JPA"]
+        outbox["Outbox<br/>[publicador programado]"]
+    end
+
+    subgraph pub["publicaciones-service [Spring Boot]"]
+        pubWeb["Adaptador web"]
+        pubNucleo["Núcleo<br/>Publicacion · Saga del límite anual"]
+        pubMongo["Adaptador Mongo"]
+        pubHttp["Adaptador HTTP<br/>ConsultaInvestigadores + Resilience4j"]
+        pubEventos["Consumidor idempotente<br/>[eventos_procesados]"]
+    end
+
+    pg[("PostgreSQL<br/>[investigadores]")]
+    mo[("MongoDB<br/>[publicaciones]")]
+
+    usuario --> frontend
+    frontend -->|"/api/** [HTTPS/JSON]"| gateway
+    gateway -.->|"descubre instancias [Eureka]"| eureka
+    gateway -.->|"límite de tasa [Redis]"| redis
+    gateway -->|"/api/investigadores/**"| invWeb
+    gateway -->|"/api/publicaciones/**"| pubWeb
+    invWeb --> invNucleo
+    invNucleo --> invJpa --> pg
+    invNucleo -->|"misma transacción<br/>[Transactional Outbox]"| outbox
+    outbox -->|"publica InvestigadorRegistrado<br/>[Kafka]"| kafka
+    kafka -->|"consume [Kafka]"| pubEventos
+    pubWeb --> pubNucleo
+    pubNucleo --> pubMongo --> mo
+    pubNucleo -->|"puerto ConsultaInvestigadores<br/>[HTTP/JSON + Circuit Breaker]"| pubHttp
     pubHttp -->|"/api/investigadores/existe?correo=...<br/>[HTTP]"| invWeb
 ```

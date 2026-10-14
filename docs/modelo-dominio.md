@@ -73,3 +73,19 @@ Factory (paso 5) en vez de repartir esa responsabilidad entre los clientes.
 | 3 · Servicio de Dominio | `LimitePublicacionesAnualesService` | `publicaciones/dominio/LimitePublicacionesAnualesService` (+ test) |
 | 4 · Límite del Agregado | Mini-ADR de `Investigador` y `Publicacion` | Este documento, sección 2 |
 | 5 · Factory | `InvestigadorFactory` | `investigadores/aplicacion/InvestigadorFactory` (+ test) |
+
+## 5. Saga del registro de publicaciones (Lección 6)
+
+Registrar una publicación es ahora una **saga orquestada** (`RegistrarPublicacionSaga`) que
+combina una llamada remota protegida con resiliencia y las reglas locales del dominio:
+
+| Paso | Acción | Compensación si algo falla después |
+| --- | --- | --- |
+| 1 | Crear la publicación en estado `PENDIENTE` | — (no hay ningún paso previo que deshacer) |
+| 2 | Confirmar el investigador (REST protegido con Circuit Breaker + Retry) | Marcar `RECHAZADA` |
+| 3 | Validar el límite anual con las publicaciones `REGISTRADA` | Marcar `RECHAZADA` |
+| 4 | Confirmar la publicación como `REGISTRADA` | Marcar `RECHAZADA` |
+
+El listado por investigador solo devuelve publicaciones `REGISTRADA`; las `RECHAZADA` quedan
+en la base como evidencia de la compensación. Los tres estados viven en el dominio
+(`EstadoPublicacion`) porque son parte del Lenguaje Ubicuo del flujo.

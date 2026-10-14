@@ -1,7 +1,7 @@
 # ADR-0002: Descomponer RICA en dos microservicios
 
 - **Fecha:** 29 de septiembre de 2026
-- **Estado:** aceptada
+- **Estado:** aceptada (la fachada nginx fue reemplazada por el API Gateway de ADR-0003)
 - **Contexto relacionado:** Lecciones 3 (DDD), 4 (hexagonal) y 5 (microservicios)
 
 ## Contexto

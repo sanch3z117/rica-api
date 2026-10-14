@@ -5,8 +5,10 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
+COPY eureka-server/pom.xml eureka-server/pom.xml
 COPY investigadores-service/pom.xml investigadores-service/pom.xml
 COPY publicaciones-service/pom.xml publicaciones-service/pom.xml
+COPY api-gateway/pom.xml api-gateway/pom.xml
 RUN chmod +x mvnw && ./mvnw -B -pl publicaciones-service -am dependency:go-offline
 
 COPY publicaciones-service/src publicaciones-service/src

@@ -1,8 +1,6 @@
-package rica_api;
+package rica_api.investigadores.dominio;
 
 import org.junit.jupiter.api.Test;
-
-import rica_api.investigadores.CorreoInstitucional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

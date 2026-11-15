@@ -1,6 +1,8 @@
 package rica_api.investigadores;
 
 import jakarta.validation.Valid;
+
+import rica_api.investigadores.dominio.Investigador;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

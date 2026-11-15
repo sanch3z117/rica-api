@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.investigadores.InvestigadorRepository;
+import rica_api.publicaciones.dominio.LimitePublicacionesAnualesService;
+import rica_api.publicaciones.dominio.Publicacion;
 
 import java.util.List;
 

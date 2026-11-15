@@ -3,6 +3,9 @@ package rica_api.investigadores;
 import org.springframework.stereotype.Service;
 
 import rica_api.compartido.RecursoNoEncontradoException;
+import rica_api.investigadores.dominio.CorreoDuplicadoException;
+import rica_api.investigadores.dominio.CorreoInstitucional;
+import rica_api.investigadores.dominio.Investigador;
 
 import java.util.List;
 

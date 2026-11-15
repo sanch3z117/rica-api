@@ -2,7 +2,7 @@ package rica_api;
 
 import org.junit.jupiter.api.Test;
 
-import rica_api.investigadores.Investigador;
+import rica_api.investigadores.dominio.Investigador;
 import rica_api.investigadores.InvestigadorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;

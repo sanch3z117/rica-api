@@ -1,4 +1,4 @@
-package rica_api.publicaciones;
+package rica_api.publicaciones.dominio;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

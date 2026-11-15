@@ -2,6 +2,9 @@ package rica_api.investigadores;
 
 import org.springframework.stereotype.Component;
 
+import rica_api.investigadores.dominio.CorreoInstitucional;
+import rica_api.investigadores.dominio.Investigador;
+
 @Component
 public class InvestigadorFactory {
 

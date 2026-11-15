@@ -1,10 +1,6 @@
-package rica_api;
+package rica_api.publicaciones.dominio;
 
 import org.junit.jupiter.api.Test;
-
-import rica_api.publicaciones.LimitePublicacionesAlcanzadoException;
-import rica_api.publicaciones.LimitePublicacionesAnualesService;
-import rica_api.publicaciones.Publicacion;
 
 import java.util.List;
 

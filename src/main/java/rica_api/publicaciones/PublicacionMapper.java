@@ -1,5 +1,7 @@
 package rica_api.publicaciones;
 
+import rica_api.publicaciones.dominio.Publicacion;
+
 public class PublicacionMapper {
     
 

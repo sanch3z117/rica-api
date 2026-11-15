@@ -7,12 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import rica_api.compartido.RecursoNoEncontradoException;
-import rica_api.investigadores.CorreoDuplicadoException;
-import rica_api.investigadores.CorreoInstitucional;
-import rica_api.investigadores.Investigador;
 import rica_api.investigadores.InvestigadorFactory;
 import rica_api.investigadores.InvestigadorRepository;
 import rica_api.investigadores.InvestigadorService;
+import rica_api.investigadores.dominio.CorreoDuplicadoException;
+import rica_api.investigadores.dominio.CorreoInstitucional;
+import rica_api.investigadores.dominio.Investigador;
 
 import java.util.Optional;
 

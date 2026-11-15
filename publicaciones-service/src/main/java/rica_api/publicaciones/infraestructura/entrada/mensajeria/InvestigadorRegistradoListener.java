@@ -32,7 +32,8 @@ public class InvestigadorRegistradoListener {
             log.info("El evento {} ya había sido procesado; se descarta el duplicado", mensaje.eventoId());
             return;
         }
-        log.info("InvestigadorRegistrado: {} ({})", mensaje.nombreCompleto(), mensaje.correoInstitucional());
+        log.info("InvestigadorRegistrado: {} ({}) [correlationId={}]",
+                mensaje.nombreCompleto(), mensaje.correoInstitucional(), mensaje.correlationId());
     }
 
     private InvestigadorRegistradoMensaje deserializar(String payload) {
@@ -48,7 +49,8 @@ public class InvestigadorRegistradoListener {
             Long investigadorId,
             String correoInstitucional,
             String nombreCompleto,
-            Instant ocurridoEn) {
+            Instant ocurridoEn,
+            String correlationId) {
     }
 
 }

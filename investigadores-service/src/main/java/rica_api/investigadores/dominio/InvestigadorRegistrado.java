@@ -8,5 +8,6 @@ public record InvestigadorRegistrado(
         Long investigadorId,
         String correoInstitucional,
         String nombreCompleto,
-        Instant ocurridoEn) {
+        Instant ocurridoEn,
+        String correlationId) {
 }

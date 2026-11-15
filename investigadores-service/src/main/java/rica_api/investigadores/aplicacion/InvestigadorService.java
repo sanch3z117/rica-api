@@ -1,5 +1,6 @@
 package rica_api.investigadores.aplicacion;
 
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,12 +49,17 @@ public class InvestigadorService implements InvestigadorUseCase {
                     "Ya existe un investigador registrado con el correo " + correo);
         }
         Investigador guardado = repositorioInvestigadores.guardar(investigador);
+        String correlationId = MDC.get("correlationId");
+        if (correlationId == null || correlationId.isBlank()) {
+            correlationId = UUID.randomUUID().toString();
+        }
         eventoSalidaRepositorio.registrar(new InvestigadorRegistrado(
                 UUID.randomUUID(),
                 guardado.getId(),
                 correo,
                 guardado.getNombreCompleto(),
-                Instant.now()));
+                Instant.now(),
+                correlationId));
         return guardado;
     }
 

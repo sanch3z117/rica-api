@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.investigadores.dominio.Investigador;
+import rica_api.investigadores.puertos.InvestigadorUseCase;
+import rica_api.investigadores.puertos.RepositorioInvestigadores;
 
 import java.util.List;
 

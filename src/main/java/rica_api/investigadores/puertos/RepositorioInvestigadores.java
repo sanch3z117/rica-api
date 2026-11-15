@@ -1,4 +1,4 @@
-package rica_api.investigadores.aplicacion;
+package rica_api.investigadores.puertos;
 
 import rica_api.investigadores.dominio.Investigador;
 

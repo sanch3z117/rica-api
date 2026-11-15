@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.investigadores.dominio.CorreoInstitucional;
 import rica_api.investigadores.dominio.Investigador;
+import rica_api.investigadores.puertos.RepositorioInvestigadores;
 
 import java.util.Optional;
 

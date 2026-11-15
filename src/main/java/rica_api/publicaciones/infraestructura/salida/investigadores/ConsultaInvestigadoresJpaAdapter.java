@@ -2,8 +2,8 @@ package rica_api.publicaciones.infraestructura.salida.investigadores;
 
 import org.springframework.stereotype.Component;
 
-import rica_api.investigadores.aplicacion.RepositorioInvestigadores;
-import rica_api.publicaciones.aplicacion.ConsultaInvestigadores;
+import rica_api.investigadores.puertos.RepositorioInvestigadores;
+import rica_api.publicaciones.puertos.ConsultaInvestigadores;
 
 @Component
 public class ConsultaInvestigadoresJpaAdapter implements ConsultaInvestigadores {

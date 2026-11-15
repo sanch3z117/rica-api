@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import rica_api.investigadores.aplicacion.InvestigadorUseCase;
+import rica_api.investigadores.puertos.InvestigadorUseCase;
 import rica_api.investigadores.dominio.Investigador;
 
 import java.net.URI;

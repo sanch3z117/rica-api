@@ -6,6 +6,8 @@ import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.publicaciones.dominio.EstadoPublicacion;
 import rica_api.publicaciones.dominio.LimitePublicacionesAnualesService;
 import rica_api.publicaciones.dominio.Publicacion;
+import rica_api.publicaciones.puertos.ConsultaInvestigadores;
+import rica_api.publicaciones.puertos.RepositorioPublicaciones;
 
 @Component
 public class RegistrarPublicacionSaga {

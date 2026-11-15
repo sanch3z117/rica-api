@@ -6,7 +6,7 @@ import org.springframework.grpc.server.service.GrpcService;
 import rica_api.grpc.InvestigadorGrpcGrpc;
 import rica_api.grpc.InvestigadorRequest;
 import rica_api.grpc.InvestigadorResponse;
-import rica_api.investigadores.aplicacion.RepositorioInvestigadores;
+import rica_api.investigadores.puertos.RepositorioInvestigadores;
 import rica_api.investigadores.dominio.Investigador;
 
 @GrpcService

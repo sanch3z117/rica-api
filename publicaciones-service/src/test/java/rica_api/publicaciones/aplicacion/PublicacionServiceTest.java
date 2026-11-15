@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.publicaciones.dominio.Publicacion;
+import rica_api.publicaciones.puertos.RepositorioPublicaciones;
 
 import java.util.List;
 import java.util.Optional;

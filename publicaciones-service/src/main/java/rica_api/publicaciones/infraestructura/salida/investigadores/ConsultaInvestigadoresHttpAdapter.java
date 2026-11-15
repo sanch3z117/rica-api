@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
-import rica_api.publicaciones.aplicacion.ConsultaInvestigadores;
+import rica_api.publicaciones.puertos.ConsultaInvestigadores;
 import rica_api.publicaciones.aplicacion.ConsultaInvestigadoresNoDisponibleException;
 
 import java.util.function.Supplier;

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import rica_api.publicaciones.aplicacion.PublicacionUseCase;
+import rica_api.publicaciones.puertos.PublicacionUseCase;
 import rica_api.publicaciones.dominio.Publicacion;
 
 import java.net.URI;

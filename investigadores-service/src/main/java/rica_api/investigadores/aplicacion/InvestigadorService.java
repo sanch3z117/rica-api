@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import rica_api.compartido.RecursoNoEncontradoException;
 import rica_api.investigadores.dominio.Investigador;
 import rica_api.investigadores.dominio.InvestigadorRegistrado;
+import rica_api.investigadores.puertos.InvestigadorUseCase;
+import rica_api.investigadores.puertos.RepositorioInvestigadores;
 
 import java.time.Instant;
 import java.util.List;

@@ -2,9 +2,9 @@ package rica_api.publicaciones.infraestructura.salida.persistencia;
 
 import org.springframework.stereotype.Component;
 
-import rica_api.publicaciones.aplicacion.RepositorioPublicaciones;
 import rica_api.publicaciones.dominio.EstadoPublicacion;
 import rica_api.publicaciones.dominio.Publicacion;
+import rica_api.publicaciones.puertos.RepositorioPublicaciones;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,17 +21,22 @@ public class PublicacionRepositoryMongoAdapter implements RepositorioPublicacion
     @Override
     public List<Publicacion> listarRegistradasPorInvestigador(String investigadorCorreo) {
         return publicacionMongoRepository.findByInvestigadorCorreoAndEstado(
-                investigadorCorreo, EstadoPublicacion.REGISTRADA);
+                        investigadorCorreo, EstadoPublicacion.REGISTRADA).stream()
+                .map(PublicacionDocumentoMapper::aDominio)
+                .toList();
     }
 
     @Override
     public Optional<Publicacion> buscarPorId(String id) {
-        return publicacionMongoRepository.findById(id);
+        return publicacionMongoRepository.findById(id)
+                .map(PublicacionDocumentoMapper::aDominio);
     }
 
     @Override
     public Publicacion guardar(Publicacion publicacion) {
-        return publicacionMongoRepository.save(publicacion);
+        PublicacionDocumento documento = publicacionMongoRepository.save(
+                PublicacionDocumentoMapper.aDocumento(publicacion));
+        return PublicacionDocumentoMapper.aDominio(documento);
     }
 
 }

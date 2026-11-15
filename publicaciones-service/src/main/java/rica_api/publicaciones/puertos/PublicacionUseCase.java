@@ -1,4 +1,4 @@
-package rica_api.publicaciones.aplicacion;
+package rica_api.publicaciones.puertos;
 
 import rica_api.publicaciones.dominio.Publicacion;
 
